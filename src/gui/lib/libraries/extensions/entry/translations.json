@@ -1,0 +1,14 @@
+{
+  "en": {
+    "myExtension.entry.name": "My Extension",
+    "myExtension.entry.description": "Description of this extension"
+  },
+  "ja": {
+    "myExtension.entry.name": "My Extension",
+    "myExtension.entry.description": "拡張機能の説明"
+  },
+  "ja-Hira": {
+    "myExtension.entry.name": "My Extension",
+    "myExtension.entry.description": "かくちょうきのうのせつめい"
+  }
+}

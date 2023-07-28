@@ -1,0 +1,14 @@
+{
+  "en": {
+    "myExtension.name": "My Extension",
+    "myExtension.doIt": "do it [SCRIPT]"
+  },
+  "ja": {
+    "myExtension.name": "My Extension",
+    "myExtension.doIt": "[SCRIPT] を実行する"
+  },
+  "ja-Hira": {
+    "myExtension.name": "My Extension",
+    "myExtension.doIt": "[SCRIPT] をじっこうする"
+  }
+}
