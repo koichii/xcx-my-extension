@@ -89,6 +89,54 @@ class ExtensionBlocks {
             // Replace 'formatMessage' to a formatter which is used in the runtime.
             formatMessage = runtime.formatMessage;
         }
+
+        this.wsock = new WebSocket("wss://j-code.org/ws/");
+        console.log("wsock:", this.wsock);
+        this.roomname = "room@j-code.org"; // Room決定
+        // socket接続したらroomに接続
+        this.wsock.addEventListener('open', e => {
+            console.log('wsock-open');
+            // room に接続
+            this.wsock.send(JSON.stringify({
+                MSGTYPE: "JOIN",
+                room: this.roomname,
+            }));
+            // 部屋にサーバーがいるか確認
+            wsock.send(JSON.stringify({
+                MSGTYPE: "MESSAGE",
+                type: "server?",
+                name: "myname",
+            }));
+/*
+            this.serverid = null;
+            setTimeout(()=>{
+                console.log('wsock-timeout');
+                if (!this.serverid) { // サーバーにつながらなかったら、接続をクローズ
+                    this.wsock.close();
+                    console.log('wsock-timeout-close');
+                }
+            }, 1000);
+*/
+        })
+        // socket切断したら終わり
+        this.wsock.addEventListener('close', e => {
+            console.log("wsock-close!!")
+        })
+        // サーバからのデータ受信時に呼ばれる
+        wsock.addEventListener('message', e => {
+            console.log("wsock-message:", e.data)
+        })
+
+    }
+
+    /**
+     * Write log.
+     * @param {object} args - the block arguments.
+     * @property {number} TEXT - the text.
+     */
+     sendMessage (args) {
+        const text = Cast.toString(args.TEXT);
+        console.log(text);
     }
 
     doIt (args) {
@@ -110,6 +158,17 @@ class ExtensionBlocks {
             blockIconURI: blockIcon,
             showStatusButton: false,
             blocks: [
+                {
+                    opcode: 'sendMessage',
+                    blockType: BlockType.COMMAND,
+                    text: 'log [TEXT]',
+                    arguments: {
+                        TEXT: {
+                            type: ArgumentType.STRING,
+                            defaultValue: "hello"
+                        }
+                    }
+                },
                 {
                     opcode: 'do-it',
                     blockType: BlockType.REPORTER,

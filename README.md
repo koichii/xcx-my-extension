@@ -1,3 +1,18 @@
+# How to install
+
+https://github.com/koichii/xcx-my-extension.git
+https://koichii.github.io/xcx-my-extension/dist/myExtension.mjs
+https://shiroganeconsultant.com/xcx-my-extension/dist/myExtension.mjs
+
+ビルド
+ローカルから開発環境へコピー
+cd ~/xcratch/xcx-my-extension
+npm run build
+開発環境からローカルへコピー
+/dist/myExtension.mjs
+git push
+
+
 # My Extension
 An example extension for [Xcratch](https://xcratch.github.io/)
 

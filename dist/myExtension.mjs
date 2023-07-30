@@ -742,6 +742,7 @@ var ExtensionBlocks = /*#__PURE__*/function () {
    * @param {Runtime} runtime - the Scratch 3.0 runtime.
    */
   function ExtensionBlocks(runtime) {
+    var _this = this;
     _classCallCheck(this, ExtensionBlocks);
     /**
      * The Scratch 3.0 runtime.
@@ -752,8 +753,56 @@ var ExtensionBlocks = /*#__PURE__*/function () {
       // Replace 'formatMessage' to a formatter which is used in the runtime.
       formatMessage = runtime.formatMessage;
     }
+    this.wsock = new WebSocket("wss://j-code.org/ws/");
+    console.log("wsock:", this.wsock);
+    this.roomname = "room@j-code.org"; // Room決定
+    // socket接続したらroomに接続
+    this.wsock.addEventListener('open', function (e) {
+      console.log('wsock-open');
+      // room に接続
+      _this.wsock.send(JSON.stringify({
+        MSGTYPE: "JOIN",
+        room: _this.roomname
+      }));
+      // 部屋にサーバーがいるか確認
+      wsock.send(JSON.stringify({
+        MSGTYPE: "MESSAGE",
+        type: "server?",
+        name: "myname"
+      }));
+      /*
+                  this.serverid = null;
+                  setTimeout(()=>{
+                      console.log('wsock-timeout');
+                      if (!this.serverid) { // サーバーにつながらなかったら、接続をクローズ
+                          this.wsock.close();
+                          console.log('wsock-timeout-close');
+                      }
+                  }, 1000);
+      */
+    });
+    // socket切断したら終わり
+    this.wsock.addEventListener('close', function (e) {
+      console.log("wsock-close!!");
+    });
+    // サーバからのデータ受信時に呼ばれる
+    wsock.addEventListener('message', function (e) {
+      console.log("wsock-message:", e.data);
+    });
   }
+
+  /**
+   * Write log.
+   * @param {object} args - the block arguments.
+   * @property {number} TEXT - the text.
+   */
   _createClass(ExtensionBlocks, [{
+    key: "sendMessage",
+    value: function sendMessage(args) {
+      var text = cast.toString(args.TEXT);
+      console.log(text);
+    }
+  }, {
     key: "doIt",
     value: function doIt(args) {
       var func = new Function("return (".concat(cast.toString(args.SCRIPT), ")"));
@@ -776,6 +825,16 @@ var ExtensionBlocks = /*#__PURE__*/function () {
         blockIconURI: img,
         showStatusButton: false,
         blocks: [{
+          opcode: 'sendMessage',
+          blockType: blockType.COMMAND,
+          text: 'log [TEXT]',
+          arguments: {
+            TEXT: {
+              type: argumentType.STRING,
+              defaultValue: "hello"
+            }
+          }
+        }, {
           opcode: 'do-it',
           blockType: blockType.REPORTER,
           blockAllThreads: false,
