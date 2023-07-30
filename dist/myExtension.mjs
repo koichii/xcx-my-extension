@@ -788,14 +788,21 @@ var ExtensionBlocks = /*#__PURE__*/function () {
     // サーバからのデータ受信時に呼ばれる
     this.wsock.addEventListener('message', function (e) {
       console.log("wsock-message:", e.data);
+      _this.receiveData.push(e.data);
     });
+    this.receiveData = [];
+    this.currentData = "";
   }
   _createClass(ExtensionBlocks, [{
     key: "whenRecived",
     value: function whenRecived(args) {
-      var bool = cast.toBoolean(args.CONDITION);
-      console.log("whenRecived", bool);
-      return cast.toBoolean(args.CONDITION);
+      if (!this.receiveData.length) {
+        return false;
+      }
+      this.currentData = this.receiveData.shift();
+      console.log("whenRecived", this.currentData);
+      return true;
+      //return Cast.toBoolean(args.CONDITION);
     }
 
     /**

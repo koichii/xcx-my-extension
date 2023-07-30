@@ -125,14 +125,20 @@ class ExtensionBlocks {
         // サーバからのデータ受信時に呼ばれる
         this.wsock.addEventListener('message', e => {
             console.log("wsock-message:", e.data)
+            this.receiveData.push(e.data);
         })
-
+        this.receiveData = [];
+        this.currentData = "";
     }
 
     whenRecived (args) {
-        var bool = Cast.toBoolean(args.CONDITION);
-        console.log("whenRecived", bool)
-        return Cast.toBoolean(args.CONDITION);
+        if (!this.receiveData.length) {
+            return false;
+        }
+        this.currentData = this.receiveData.shift();
+        console.log("whenRecived", this.currentData);
+        return true;
+        //return Cast.toBoolean(args.CONDITION);
     }
 
     /**
