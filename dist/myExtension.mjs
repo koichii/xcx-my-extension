@@ -755,7 +755,7 @@ var ExtensionBlocks = /*#__PURE__*/function () {
     }
     this.wsock = new WebSocket("wss://j-code.org/ws/");
     console.log("wsock:", this.wsock);
-    this.roomname = "room@j-code.org"; // Room決定
+    this.roomname = "4710@j-code.org"; // Room決定
     // socket接続したらroomに接続
     this.wsock.addEventListener('open', function (e) {
       console.log('wsock-open');
@@ -765,7 +765,7 @@ var ExtensionBlocks = /*#__PURE__*/function () {
         room: _this.roomname
       }));
       // 部屋にサーバーがいるか確認
-      wsock.send(JSON.stringify({
+      _this.wsock.send(JSON.stringify({
         MSGTYPE: "MESSAGE",
         type: "server?",
         name: "myname"
@@ -786,7 +786,7 @@ var ExtensionBlocks = /*#__PURE__*/function () {
       console.log("wsock-close!!");
     });
     // サーバからのデータ受信時に呼ばれる
-    wsock.addEventListener('message', function (e) {
+    this.wsock.addEventListener('message', function (e) {
       console.log("wsock-message:", e.data);
     });
   }

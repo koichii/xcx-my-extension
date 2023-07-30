@@ -11,7 +11,8 @@ npm run build
 開発環境からローカルへコピー
 /dist/myExtension.mjs
 git push
-
+xcratch拡張機能として読み込む
+https://shiroganeconsultant.com/xcx-my-extension/dist/myExtension.mjs
 
 # My Extension
 An example extension for [Xcratch](https://xcratch.github.io/)
