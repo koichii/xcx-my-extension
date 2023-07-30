@@ -129,6 +129,12 @@ class ExtensionBlocks {
 
     }
 
+    whenRecived (args) {
+        var bool = Cast.toBoolean(args.CONDITION);
+        console.log("whenRecived", bool)
+        return Cast.toBoolean(args.CONDITION);
+    }
+
     /**
      * Write log.
      * @param {object} args - the block arguments.
@@ -137,6 +143,12 @@ class ExtensionBlocks {
      sendMessage (args) {
         const text = Cast.toString(args.TEXT);
         console.log(text);
+        this.wsock.send(JSON.stringify({
+            MSGTYPE: "MESSAGE",
+            type: "server?",
+            name: text,
+        }));
+
     }
 
     doIt (args) {
@@ -159,9 +171,21 @@ class ExtensionBlocks {
             showStatusButton: false,
             blocks: [
                 {
+                    opcode: "whenRecived",
+                    blockType: BlockType.HAT,
+                    text: "when [CONDITION]",
+                    arguments: {
+                        CONDITION: {
+                            type: ArgumentType.BOOLEAN,
+                            defaultValue: false
+                        }
+                    },
+                    isEdgeActivated: true
+                },
+                {
                     opcode: 'sendMessage',
                     blockType: BlockType.COMMAND,
-                    text: 'log [TEXT]',
+                    text: 'send [TEXT]',
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,

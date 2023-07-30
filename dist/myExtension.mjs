@@ -790,17 +790,29 @@ var ExtensionBlocks = /*#__PURE__*/function () {
       console.log("wsock-message:", e.data);
     });
   }
-
-  /**
-   * Write log.
-   * @param {object} args - the block arguments.
-   * @property {number} TEXT - the text.
-   */
   _createClass(ExtensionBlocks, [{
+    key: "whenRecived",
+    value: function whenRecived(args) {
+      var bool = cast.toBoolean(args.CONDITION);
+      console.log("whenRecived", bool);
+      return cast.toBoolean(args.CONDITION);
+    }
+
+    /**
+     * Write log.
+     * @param {object} args - the block arguments.
+     * @property {number} TEXT - the text.
+     */
+  }, {
     key: "sendMessage",
     value: function sendMessage(args) {
       var text = cast.toString(args.TEXT);
       console.log(text);
+      this.wsock.send(JSON.stringify({
+        MSGTYPE: "MESSAGE",
+        type: "server?",
+        name: text
+      }));
     }
   }, {
     key: "doIt",
@@ -825,9 +837,20 @@ var ExtensionBlocks = /*#__PURE__*/function () {
         blockIconURI: img,
         showStatusButton: false,
         blocks: [{
+          opcode: "whenRecived",
+          blockType: blockType.HAT,
+          text: "when [CONDITION]",
+          arguments: {
+            CONDITION: {
+              type: argumentType.BOOLEAN,
+              defaultValue: false
+            }
+          },
+          isEdgeActivated: true
+        }, {
           opcode: 'sendMessage',
           blockType: blockType.COMMAND,
-          text: 'log [TEXT]',
+          text: 'send [TEXT]',
           arguments: {
             TEXT: {
               type: argumentType.STRING,
