@@ -4,15 +4,22 @@ https://github.com/koichii/xcx-my-extension.git
 https://koichii.github.io/xcx-my-extension/dist/myExtension.mjs
 https://shiroganeconsultant.com/xcx-my-extension/dist/myExtension.mjs
 
-ビルド
+★ビルド
 ローカルから開発環境へコピー
 cd ~/xcratch/xcx-my-extension
 npm run build
+
+★開発マシンから本番マシンへコピー
+scp ~/xcratch/xcx-my-extension/dist/myExtension.mjs koichii@j-code.org:/datadrive/pcratch/assets/
+https://kitaratch.j-code.org/get_asset_file/myExtension.mjs
+
+==
 開発環境からローカルへコピー
 /dist/myExtension.mjs
 git push
 xcratch拡張機能として読み込む
 https://shiroganeconsultant.com/xcx-my-extension/dist/myExtension.mjs
+==
 
 # My Extension
 An example extension for [Xcratch](https://xcratch.github.io/)

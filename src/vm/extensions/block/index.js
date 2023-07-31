@@ -92,7 +92,7 @@ class ExtensionBlocks {
 
         this.wsock = new WebSocket("wss://j-code.org/ws/");
         console.log("wsock:", this.wsock);
-        this.roomname = "4710@j-code.org"; // Room決定
+        this.roomname = "room0731@j-code.org"; // Room決定
         // socket接続したらroomに接続
         this.wsock.addEventListener('open', e => {
             console.log('wsock-open');
@@ -101,22 +101,11 @@ class ExtensionBlocks {
                 MSGTYPE: "JOIN",
                 room: this.roomname,
             }));
-            // 部屋にサーバーがいるか確認
+            // 最初のメッセージを送信
             this.wsock.send(JSON.stringify({
                 MSGTYPE: "MESSAGE",
-                type: "server?",
-                name: "myname",
+                message: "こんにちは！",
             }));
-/*
-            this.serverid = null;
-            setTimeout(()=>{
-                console.log('wsock-timeout');
-                if (!this.serverid) { // サーバーにつながらなかったら、接続をクローズ
-                    this.wsock.close();
-                    console.log('wsock-timeout-close');
-                }
-            }, 1000);
-*/
         })
         // socket切断したら終わり
         this.wsock.addEventListener('close', e => {
@@ -125,36 +114,65 @@ class ExtensionBlocks {
         // サーバからのデータ受信時に呼ばれる
         this.wsock.addEventListener('message', e => {
             console.log("wsock-message:", e.data)
-            this.receiveData.push(e.data);
+            var msg = {};
+            try {
+                msg = JSON.parse(e.data)
+            } catch (error) {
+                console.log(error);
+                return;
+            }
+            if (msg && msg.MSGTYPE=="MESSAGE") {
+                this.receiveData.push(msg.message);
+            }
         })
         this.receiveData = [];
-        this.currentData = "";
-    }
-
-    whenRecived (args) {
-        if (!this.receiveData.length) {
-            return false;
-        }
-        this.currentData = this.receiveData.shift();
-        console.log("whenRecived", this.currentData);
-        return true;
-        //return Cast.toBoolean(args.CONDITION);
+        this.currentMessage = "";
+        this.read = false;
     }
 
     /**
-     * Write log.
-     * @param {object} args - the block arguments.
-     * @property {number} TEXT - the text.
+     * Read current message.
+     * @return {Message} - string
      */
-     sendMessage (args) {
+    readMessage () {
+        return this.currentMessage;
+    }
+
+    /**
+     * When data Recived.
+     * @return {true} - data exist.
+     */
+    whenRecived (args) {
+        if (this.read) {
+            this.read = false;
+            return false;
+        }
+        if (!this.receiveData.length) {
+            return false;
+        }
+        this.read = true;
+        this.currentMessage = this.receiveData.shift();
+        console.log("whenRecived", this.currentMessage);
+        return true;
+    }
+    /**
+     * Recive next message
+     */
+    reciveNext (args) {
+        this.currentMessage = "";
+    }
+   
+    /**
+     * Send Message.
+     * @param {TEXT} args - the message to be sent.
+     */
+    sendMessage (args) {
         const text = Cast.toString(args.TEXT);
         console.log(text);
         this.wsock.send(JSON.stringify({
             MSGTYPE: "MESSAGE",
-            type: "server?",
-            name: text,
+            message: text,
         }));
-
     }
 
     doIt (args) {
@@ -177,8 +195,16 @@ class ExtensionBlocks {
             showStatusButton: false,
             blocks: [
                 {
+                    opcode: 'readMessage',
+                    text: 'message',
+                    blockType: BlockType.REPORTER
+                },
+                {
                     opcode: "whenRecived",
                     blockType: BlockType.HAT,
+                    text: "when Recived",
+                    isEdgeActivated: true
+/*
                     text: "when [CONDITION]",
                     arguments: {
                         CONDITION: {
@@ -186,7 +212,12 @@ class ExtensionBlocks {
                             defaultValue: false
                         }
                     },
-                    isEdgeActivated: true
+*/
+                },
+                {
+                    opcode: 'reciveNext',
+                    blockType: BlockType.COMMAND,
+                    text: 'Recive next message',
                 },
                 {
                     opcode: 'sendMessage',
